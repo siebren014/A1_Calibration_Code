@@ -1,0 +1,3 @@
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/cmake-build-debug/CMakeFiles/Calibration.dir
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/cmake-build-debug/CMakeFiles/rebuild_cache.dir

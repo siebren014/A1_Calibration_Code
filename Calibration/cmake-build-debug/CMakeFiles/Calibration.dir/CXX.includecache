@@ -1,0 +1,104 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/calibration.cpp
+calibration.h
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/calibration.h
+easy3d/core/surface_mesh.h
+-
+easy3d/viewer/drawable_triangles.h
+-
+easy3d/viewer/drawable_lines.h
+-
+easy3d/viewer/camera.h
+-
+easy3d/viewer/key_frame_interpolator.h
+-
+easy3d/viewer/manipulated_camera_frame.h
+-
+easy3d/viewer/texture.h
+-
+easy3d/viewer/primitives.h
+-
+easy3d/viewer/setting.h
+-
+easy3d/util/string.h
+-
+easy3d/fileio/resources.h
+-
+easy3d/util/dialogs.h
+-
+3rd_party/glfw/include/GLFW/glfw3.h
+-
+
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/calibration.h
+easy3d/viewer/viewer.h
+-
+./vector.h
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/vector.h
+./matrix.h
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/matrix.h
+
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/calibration_method.cpp
+calibration.h
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/calibration.h
+matrix_algo.h
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/matrix_algo.h
+
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/main.cpp
+calibration.h
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/calibration.h
+easy3d/fileio/resources.h
+-
+easy3d/util/logging.h
+-
+
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/matrix.h
+vector
+-
+./vector.h
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/vector.h
+cassert
+-
+vector
+-
+complex
+-
+algorithm
+-
+cmath
+-
+iostream
+-
+
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/matrix_algo.cpp
+matrix_algo.h
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/matrix_algo.h
+iostream
+-
+3rd_party/Eigen/Dense
+-
+
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/matrix_algo.h
+matrix.h
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/matrix.h
+
+C:/Users/siebr/OneDrive/Documenten/Geomatics/Semester 2/photogrammetry/A1_Calibration_Code/Calibration/vector.h
+vector
+-
+iostream
+-
+cassert
+-
+cmath
+-
+cfloat
+-
+limits
+-
+
