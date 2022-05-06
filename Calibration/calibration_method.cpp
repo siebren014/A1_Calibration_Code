@@ -176,20 +176,18 @@ bool Calibration::calibration(
     double v0 = 0.0;
     double alpha = 0.0;
     double beta = 0.0;
-    double costheta = 0.0;
-    double sintheta = 0.0; // computation of sintheta
     ro = 1.0/(a3.norm());
     u0 = pow(ro,2)*dot(a1,a3);
     v0 = pow(ro,2)*dot(a2,a3);
-    costheta = -(dot(cross(a1,a3),(cross(a2,a3)))/(dot(norm(cross(a1,a3))),norm(cross(a2,a3))));
+    double costheta = -(dot(cross(a1,a3),(cross(a2,a3)))/(dot(norm(cross(a1,a3))),norm(cross(a2,a3))));
     double theta = acos(costheta);
     double sintheta = sin(theta);
     alpha = pow(ro,2)*norm(cross(a1,a3))*sintheta;
     beta = pow(ro,2)*norm(cross(a1,a3))*sintheta;
 
-    Matrix K = (3,3,0);
+    Matrix K = (3,3,0.0);
     K[1][1]= alpha;
-    K[1][2]= -alpha(costheta*sintheta);
+    K[1][2]= -alpha*(costheta*sintheta);
     K[1][3]= u0;
     K[2][1]= 0;
     K[2][2]= beta/sintheta;
@@ -198,11 +196,24 @@ bool Calibration::calibration(
     K[3][2]= 0;
     K[3][3]= 1;
 
+    std::cout<<std::endl<<"K matric"<< std::endl;
+    std::cout<<K<<std::endl;
+    std::cout<<"ro"<<ro<<std::endl;
+    std::cout<<"u0"<<u0<<std::endl;
+    std::cout<<"v0"<<v0<<std::endl;
+    std::cout<<"costheta"<<costheta<<std::endl;
+    std::cout<<"alpha"<<alpha<<std::endl;
+    std::cout<<"beta"<<beta<<std::endl;
+
     // TODO: extract extrinsic parameters from M.
 
-    Vector2D r1 = (cross(a2,a3))/(norm(cross(a2,a1)));
+    
+    Matrix r1 = (cross(a2,a3))/(norm(cross(a2,a1)));
     Vector2D r3 = ro*(a3);
     Vector2D r2 = cross(r3,r1);
+    Matrix R = Matrix(transpose(r1),transpose(r2),transpose(r3));
+
+
 
     Vector3D transl = ro* mult(inverse(K),b);
 
