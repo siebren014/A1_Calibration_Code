@@ -59,31 +59,28 @@ bool Calibration::calibration(
     if (!isvalid(points_3d, points_2d)){
         throw std::invalid_argument( "invalid input" );
     }
-
     std::vector<std::vector<double>> points_3d_and_2d;
+    std::vector<double> all_point;
+
     int j = 0;
     for (const auto & point: points_3d ){
-        std::vector<double> temp;
-        temp.emplace_back(point);
-        temp.emplace_back(points_2d[j]);
-        points_3d_and_2d.emplace_back(temp);
+        all_point.push_back(point.x());
+        all_point.push_back(point.y());
+        all_point.push_back(point.z());
+        all_point.push_back(points_2d[j].x());
+        all_point.push_back(points_2d[j].y());
+        j = j +1;
     }
 
     for (const auto & point: points_3d_and_2d ){
         std::cout<<point<<std::endl;
     }
 
+
     // TODO: construct the P matrix (so P * m = 0).
 
-    std::ifstream stream_in;
-    std::string fileIn = "resources/data/test_data_1(6_points)-test1.txt";
-    Matrix mat = Matrix(points_3d.size(), 5,0.0);
-    stream_in.open(fileIn);
-    if (stream_in.is_open()) {
 
-        stream_in >> mat;
-        stream_in.close();
-    }
+    Matrix mat = Matrix(points_3d.size(), 5, all_point);
 
     std::cout << mat << std::endl;
 
