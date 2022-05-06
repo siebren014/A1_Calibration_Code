@@ -23,6 +23,7 @@
  */
 
 #include "calibration.h"
+#include "matrix_algo.h"
 #include <easy3d/fileio/resources.h>
 #include <easy3d/util/logging.h>
 
@@ -186,16 +187,111 @@ void MatrixTest() {
     std::cout << mat << std::endl;
 
 }
-
 int main(int argc, char** argv) {
     // the model file.
     const std::string model_file = resource::directory() + "/data/corner.obj";
 
     try {
-        Calibration viewer("Calibration", model_file);
+
+        printf("hallo\n");
+
+        //VectorTest();
+        //MatrixTest();
+
+        // read matrix from file
+        std::ifstream stream_in;
+        std::string fileIn = "C:\\Users\\marie\\Documents\\q4geomatics\\geo1016\\A1_Calibration\\A1_Calibration_Code\\resources\\data\\test_data_1(6_points)-test1.txt";
+        Matrix mat = Matrix(1,1,0.0);
+        stream_in.open(fileIn);
+        if (stream_in.is_open()) {
+            stream_in >> mat;
+            stream_in.close();
+        }
+        std::cout << mat << std::endl;
+
+        ////Matrix P = mat.resize(mat.rows(),3); did not work
+        //Matrix P = Matrix(mat.rows(), mat.cols()-2, 0.0);
+        //for (int i = 0; i < P.rows(); i++) {
+        //    for (int j =0; j < P.cols(); j++) {
+        //        P[i][j] = mat[i][j];
+        //    }
+        //}
+        //std::cout << P << std::endl;
+
+        int m = mat.rows()*2;
+        int n = 12;
+
+        Matrix A = Matrix(m, n, 0.0);
+        int ii = 0;
+        for (int i = 0; i < mat.rows(); i++) {
+            A[ii][0] = mat[i][0];
+            A[ii][1] = mat[i][1];
+            A[ii][2] = mat[i][2];
+            A[ii][3] = 1.0;
+            A[ii][4] = 0.0;
+            A[ii][5] = 0.0;
+            A[ii][6] = 0.0;
+            A[ii][7] = 0.0;
+            A[ii][8] = -1.0*mat[i][0]*mat[i][3];
+            A[ii][9] = -1.0*mat[i][1]*mat[i][3];
+            A[ii][10] = -1.0*mat[i][2]*mat[i][3];
+            A[ii][11] = -1.0*mat[i][3];
+            ii += 1;
+            A[ii][0] = 0.0;
+            A[ii][1] = 0.0;
+            A[ii][2] = 0.0;
+            A[ii][3] = 0.0;
+            A[ii][4] = mat[i][0];
+            A[ii][5] = mat[i][1];
+            A[ii][6] = mat[i][2];
+            A[ii][7] = 1.0;
+            A[ii][8] = -1.0*mat[i][0]*mat[i][4];
+            A[ii][9] = -1.0*mat[i][1]*mat[i][4];
+            A[ii][10] = -1.0*mat[i][2]*mat[i][4];
+            A[ii][11] = -1.0*mat[i][4];
+            ii += 1;
+        }
+        // print to file
+        std::ofstream stream_out;
+        std::string fileOut = "c:\\tmp\\fullmatrix.dat";
+        stream_out.open(fileOut);
+        if (stream_out.is_open()) {
+            stream_out << A << std::endl;
+            stream_out.close();
+        }
+
+        Vector M = Vector(n, 0.0);
+        Matrix U = Matrix(m,m,0.0);
+        Matrix S = Matrix(m,n, 0.0);
+        Matrix V = Matrix(n,n,0.0);
+
+        // A input matrix to be decomposed M by N matrix
+        // U left side M by M orthogonal matrix.
+        // S middle M by N diagonal matrix, with zero elements outside of its main diagonal.
+        // V The right side N by N orthogonal matrix V.
+
+        svd_decompose(A, U, S, V);
+        for (int i = 0; i < n; i++) {
+            M[i] = V[i][n-1];
+        }
+
+        std::ofstream stream_out1;
+        std::string fileOut1 = "c:\\tmp\\mmatrix.dat";
+        stream_out1.open(fileOut1);
+        if (stream_out1.is_open()) {
+            stream_out1 << M << std::endl;
+            stream_out1.close();
+        }
+
+        Vector N = Vector(m,5.0);
+        N = mult(A,M);
+        std::cout << N << "\n" << std::endl;
+
+
+        //Calibration viewer("Calibration", model_file);
 
         // Run the viewer
-        viewer.run();
+        //viewer.run();
     } catch (const std::runtime_error &e) {
         LOG(ERROR) << "caught a fatal error: " + std::string(e.what());
         return EXIT_FAILURE;
