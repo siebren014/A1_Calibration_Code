@@ -200,11 +200,11 @@ bool Calibration::calibration(
 
     // TODO: extract extrinsic parameters from M.
 
-    double r1 = (cross(a2,a3))/norm(a2,a1);
-    double r3 = ro(a3);
-    double r2 = cross(r3,r1);
+    Vector2D r1 = (cross(a2,a3))/(norm(cross(a2,a1)));
+    Vector2D r3 = ro*(a3);
+    Vector2D r2 = cross(r3,r1);
 
-    Vector3D t = ro* mult(inverse(K),b);
+    Vector3D transl = ro* mult(inverse(K),b);
 
 
 
