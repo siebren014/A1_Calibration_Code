@@ -162,7 +162,26 @@ bool Calibration::calibration(
     //   Optional: you can check if your M is correct by applying M on the 3D points. If correct, the projected point
     //             should be very close to your input images points.
 
+
+
     // TODO: extract intrinsic parameters from M.
+
+    Vector a1 = Vector(M[1][1], M[1][2]);
+    Vector a2 = Vector(M[2][1], M[2][2]);
+    Vector a3 = Vector(M[3][1], M[3][2]);
+
+    double ro = 0.0;
+    double u0 = 0.0;
+    double v0 = 0.0;
+    double costheta = 0.0;
+    ro = 1.0/(a3.norm());
+    u0 = pow(ro,2)*dot(a1,a3);
+    v0 = pow(ro,2)*dot(a2,a3);
+    costheta = -(dot(cross(a1,a3),(cross(a2,a3)))/(dot(norm(cross(a1,a3))),norm(cross(a2,a3))));
+    alpha = pow(ro,2)
+
+
+
 
     // TODO: extract extrinsic parameters from M.
 
