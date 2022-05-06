@@ -169,21 +169,45 @@ bool Calibration::calibration(
     Vector a1 = Vector(M[1][1], M[1][2]);
     Vector a2 = Vector(M[2][1], M[2][2]);
     Vector a3 = Vector(M[3][1], M[3][2]);
+    Vector b = Vector(M[1][3], M[2][3], M[3][3]);
 
     double ro = 0.0;
     double u0 = 0.0;
     double v0 = 0.0;
+    double alpha = 0.0;
+    double beta = 0.0;
     double costheta = 0.0;
+    double sintheta = 0.0; // computation of sintheta
     ro = 1.0/(a3.norm());
     u0 = pow(ro,2)*dot(a1,a3);
     v0 = pow(ro,2)*dot(a2,a3);
     costheta = -(dot(cross(a1,a3),(cross(a2,a3)))/(dot(norm(cross(a1,a3))),norm(cross(a2,a3))));
-    alpha = pow(ro,2)
+    double theta = acos(costheta);
+    double sintheta = sin(theta);
+    alpha = pow(ro,2)*norm(cross(a1,a3))*sintheta;
+    beta = pow(ro,2)*norm(cross(a1,a3))*sintheta;
 
-
-
+    Matrix K = (3,3,0);
+    K[1][1]= alpha;
+    K[1][2]= -alpha(costheta*sintheta);
+    K[1][3]= u0;
+    K[2][1]= 0;
+    K[2][2]= beta/sintheta;
+    K[2][3]= v0;
+    K[3][1]= 0;
+    K[3][2]= 0;
+    K[3][3]= 1;
 
     // TODO: extract extrinsic parameters from M.
+
+    double r1 = (cross(a2,a3))/norm(a2,a1);
+    double r3 = ro(a3);
+    double r2 = cross(r3,r1);
+
+    Vector3D t = ro* mult(inverse(K),b);
+
+
+
 
     std::cout << "\n\tTODO: After you implement this function, please return 'true' - this will trigger the viewer to\n"
                  "\t\tupdate the rendering using your recovered camera parameters. This can help you to visually check\n"
