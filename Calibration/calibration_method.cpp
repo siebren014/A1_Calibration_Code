@@ -72,6 +72,7 @@ bool Calibration::calibration(
         j = j +1;
     }
 
+    //to print the matrix
     for (const auto & point: points_3d_and_2d ){
         std::cout<<point<<std::endl;
     }
@@ -129,17 +130,31 @@ bool Calibration::calibration(
         M[i] = V[i][n-1];
     }
 
-//    std::ofstream stream_out1;
-//    std::string fileOut1 = "c:\\tmp\\mmatrix.dat";
-//    stream_out1.open(fileOut1);
-//    if (stream_out1.is_open()) {
-//        stream_out1 << M << std::endl;
-//        stream_out1.close();
-//    }
+    std::ofstream stream_out1;
+    std::string fileOut1 = "c:\\tmp\\mmatrix.dat";
+    stream_out1.open(fileOut1);
+    if (stream_out1.is_open()) {
+        stream_out1 << M << std::endl;
+        stream_out1.close();
+    }
 
     Vector N = Vector(m,5.0);
     N = mult(A,M);
+    std::cout<<"we here"<<std::endl;
     std::cout << N << "\n" << std::endl;
+
+    std::cout<<std::endl<<"M matric"<< std::endl;
+    std::cout<<M<<std::endl;
+
+    for (int i = 0; i < M.size(); i++){
+        std::cout<<"test"<<std::endl;
+        std::cout<<M[i]<<std::endl;
+        if (M[i]> 1){
+            throw std::invalid_argument( "M too big input" );
+        }
+    }
+
+    //add check to see if close to zero
 
 
 
