@@ -209,8 +209,15 @@ bool Calibration::calibration(
     R.set_row(2,{r3[0], r3[1], r3[2]});
     std::cout<<"checkkk "<<R<<std::endl;
 
-    Vector3D transl = ro* mult(inverse(K),b);
-    std::cout<<"checkkktr "<<transl<<std::endl;
+    Vector3D t = ro* mult(inverse(K),b);
+    std::cout<<"checkkktr "<<t<<std::endl;
+
+
+    skew = -alpha * costheta;
+    cx = u0;
+    cy = v0;
+    fx = alpha;
+    fy = beta;
 
     return true;
 }
