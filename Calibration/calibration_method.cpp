@@ -112,16 +112,16 @@ bool Calibration::calibration(
 
     Vector N = Vector(m,5.0);
     N = mult(A,M);
-    std::cout<<"we here"<<std::endl;
+    std::cout<<"should be the null vector but there is a offset"<<std::endl;
     std::cout << N << "\n" << std::endl;
 
     std::cout<<std::endl<<"M matrix"<< std::endl;
     std::cout<<M<<std::endl;
 
     for (int i = 0; i < N.size(); i++){
-        std::cout<<"test"<<std::endl;
-        std::cout<<N[i]<<std::endl;
-        if (N[i]> 0.0001){
+        //std::cout<<"test"<<std::endl;
+        //std::cout<<N[i]<<std::endl;
+        if (N[i]> 0.001){
             throw std::invalid_argument( "input data too noisy" );
         }
     }
@@ -162,6 +162,8 @@ bool Calibration::calibration(
 
     u0 = pow(ro,2)*dot(a1,a3);
     v0 = pow(ro,2)*dot(a2,a3);
+
+
     std::cout << "u0 "<< u0 << "\n" << std::endl;
     std::cout << "v0 "<< v0 << "\n" << std::endl;
 
@@ -196,7 +198,7 @@ bool Calibration::calibration(
 
     //add check to see if close to zero
 
-    Vector3D r1 = (cross(a2,a3))/(norm(cross(a2,a1)));
+    Vector3D r1 = (cross(a2,a3))/(norm(cross(a2,a3)));
     std::cout<<"r1 "<<r1<<std::endl;
     Vector3D r3 = ro*(a3);
     Vector3D r2 = cross(r3,r1);
@@ -211,9 +213,12 @@ bool Calibration::calibration(
 
     t = ro* mult(inverse(K),b);
     std::cout<<"checkkktr "<<t<<std::endl;
-
+    
+    //calibration validation parameters
     double cotheta = costheta / sintheta;
+    std::cout<<"skew before"<< skew<< std::endl;
     skew = -alpha * cotheta;
+    std::cout<<"skew after"<< skew<< std::endl;
     cx = u0;
     cy = v0;
     fx = alpha;
@@ -221,13 +226,4 @@ bool Calibration::calibration(
 
     return true;
 }
-
-
-
-
-
-
-
-
-
 
