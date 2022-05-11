@@ -173,6 +173,19 @@ bool Calibration::calibration(
     cy = v0;
     fx = alpha;
     fy = beta;
+    
+    // for validating M from the computation K [R t]
+    Vector4D RR1= Vector4D(r1[0], r1[1], r1[2],t[0]);
+    Vector4D RR2= Vector4D(r2[0], r2[1], r2[2],t[1]);
+    Vector4D RR3= Vector4D(r3[0], r3[1], r3[2],t[2]);
+
+    Matrix34 RT = (3,4,0.0);
+    RT.set_row(0,RR1);
+    RT.set_row(1,RR2);
+    RT.set_row(2,RR3);
+    std::cout<<"RT validation"<< RT<< std::endl;
+    Matrix34 MMM = mult(K,RT);
+    std::cout<<"M validation"<< MMM<< std::endl;
 
     return true;
 }
