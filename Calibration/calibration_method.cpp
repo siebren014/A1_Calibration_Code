@@ -3,13 +3,7 @@
 
 using namespace easy3d;
 
-
-/**
- * TODO: Finish this function for calibrating a camera from the corresponding 3D-2D point pairs.
- *       You may define a few functions for some sub-tasks.
- * @return True on success, otherwise false. On success, the camera parameters are returned by
- */
-
+// Check to see if the input data is valid by checking if it has at least 6 points and the 3d and 2d vectors have the same size.
 bool isvalid(const std::vector<Vector3D>& points_3d, const std::vector<Vector2D>& points_2d){
 
     if (points_3d.size() >= 6 && points_3d.size() == points_2d.size()){
@@ -20,6 +14,7 @@ bool isvalid(const std::vector<Vector3D>& points_3d, const std::vector<Vector2D>
     }
 }
 
+//calibration function
 bool Calibration::calibration(
         const std::vector<Vector3D>& points_3d, /// input: An array of 3D points.
         const std::vector<Vector2D>& points_2d, /// input: An array of 2D image points.
@@ -30,14 +25,15 @@ bool Calibration::calibration(
         Vector3D& t)               /// output：a 3D vector encoding camera translation.
 {
 
-
-    // TODO: check if input is valid (e.g., number of correspondences >= 6, sizes of 2D/3D points must match)
+    //check if the input data is valid, esle throw an error
     if (!isvalid(points_3d, points_2d)){
         throw std::invalid_argument( "invalid input" );
     }
-    std::vector<std::vector<double>> points_3d_and_2d;
+
+    //vector for all points
     std::vector<double> all_point;
 
+    // push all the points in the all_point vector
     int j = 0;
     for (const auto & point: points_3d ){
         all_point.push_back(point.x());
@@ -48,18 +44,12 @@ bool Calibration::calibration(
         j = j +1;
     }
 
-    //to print the matrix
-    for (const auto & point: points_3d_and_2d ){
-        std::cout<<point<<std::endl;
-    }
-
+    //matrix with the 3d and 2d points
     Matrix mat = Matrix(points_3d.size(), 5, all_point);
-
-    std::cout << mat << std::endl;
-
     int m = mat.rows()*2;
     int n = 12;
 
+    //creating and filling the A matrix
     Matrix A = Matrix(m, n, 0.0);
     int ii = 0;
     for (int i = 0; i < mat.rows(); i++) {
@@ -102,30 +92,17 @@ bool Calibration::calibration(
         M[i] = V[i][n-1];
     }
 
-    std::ofstream stream_out1;
-    std::string fileOut1 = "c:\\tmp\\mmatrix.dat";
-    stream_out1.open(fileOut1);
-    if (stream_out1.is_open()) {
-        stream_out1 << M << std::endl;
-        stream_out1.close();
-    }
-
     Vector N = Vector(m,5.0);
     N = mult(A,M);
-    std::cout<<"we here"<<std::endl;
-    std::cout << N << "\n" << std::endl;
 
-    std::cout<<std::endl<<"M matrix"<< std::endl;
-    std::cout<<M<<std::endl;
-
+    //Check if the data is not too noisy, if it is, throw an error.
     for (int i = 0; i < N.size(); i++){
-        std::cout<<"test"<<std::endl;
-        std::cout<<N[i]<<std::endl;
         if (N[i]> 0.0001){
             throw std::invalid_argument( "input data too noisy" );
         }
     }
 
+    //creating and filling MM matrix
     Matrix34 MM = Matrix(3,4,0.0);
     MM[0][0]=M[0];
     MM[0][1]=M[1];
@@ -140,17 +117,11 @@ bool Calibration::calibration(
     MM[2][2]=M[10];
     MM[2][3]=M[11];
 
-    std::cout<<"MM matrix"<<MM<<std::endl;
 
     Vector a1 = Vector3D(MM[0][0], MM[0][1], MM[0][2]);
     Vector a2 = Vector3D(MM[1][0], MM[1][1], MM[1][2]);
     Vector a3 = Vector3D(MM[2][0], MM[2][1], MM[2][2]);
     Vector b = Vector3D(MM[0][3], MM[1][3], MM[2][3]);
-    std::cout << "a1 "<< a1 << "\n" << std::endl;
-    std::cout << "a2 "<< a2 << "\n" << std::endl;
-    std::cout << "a3 "<< a3 << "\n" << std::endl;
-    std::cout << "b "<< b << "\n" << std::endl;
-
 
     double ro = 0.0;
     double u0 = 0.0;
@@ -158,21 +129,16 @@ bool Calibration::calibration(
     double alpha = 0.0;
     double beta = 0.0;
     ro = 1.0/(a3.norm());
-    std::cout << "ro "<< ro << "\n" << std::endl;
 
     u0 = pow(ro,2)*dot(a1,a3);
     v0 = pow(ro,2)*dot(a2,a3);
-    std::cout << "u0 "<< u0 << "\n" << std::endl;
-    std::cout << "v0 "<< v0 << "\n" << std::endl;
+
 
     double costheta = -((dot(cross(a1,a3),(cross(a2,a3))))/(((cross(a1,a3)).norm())*((cross(a2,a3)).norm())));
     double theta = acos(costheta);
     double sintheta = sin(theta);
     alpha = pow(ro,2)*norm(cross(a1,a3))*sintheta;
     beta = pow(ro,2)*norm(cross(a1,a3))*sintheta;
-    std::cout << "costheta "<< costheta << "\n" << std::endl;
-    std::cout << "theta "<< theta << "\n" << std::endl;
-    std::cout << "sintheta "<< sintheta << "\n" << std::endl;
 
     Matrix33 K = (3,3,0.0);
     K[0][0]= alpha;
@@ -185,32 +151,54 @@ bool Calibration::calibration(
     K[2][1]= 0;
     K[2][2]= 1;
 
-
-    std::cout<<"K matrix"<<K<<std::endl;
-    std::cout<<"ro"<<ro<<std::endl;
-    std::cout<<"u0"<<u0<<std::endl;
-    std::cout<<"v0"<<v0<<std::endl;
-    std::cout<<"costheta"<<costheta<<std::endl;
-    std::cout<<"alpha"<<alpha<<std::endl;
-    std::cout<<"beta"<<beta<<std::endl;
-
-    //add check to see if close to zero
-
     Vector3D r1 = (cross(a2,a3))/(norm(cross(a2,a1)));
-    std::cout<<"r1 "<<r1<<std::endl;
     Vector3D r3 = ro*(a3);
     Vector3D r2 = cross(r3,r1);
-    std::cout<<"r2 "<<r2<<std::endl;
-    std::cout<<"r3 "<<r3<<std::endl;
-    //Vector r4 = (9,)
 
     R.set_row(0,{r1[0], r1[1], r1[2]});
     R.set_row(1,{r2[0], r2[1], r2[2]});
     R.set_row(2,{r3[0], r3[1], r3[2]});
-    std::cout<<"checkkk "<<R<<std::endl;
 
     Vector3D transl = ro* mult(inverse(K),b);
-    std::cout<<"checkkktr "<<transl<<std::endl;
+
+
+
+    // In case you want to check some things: here are some outputs.
+
+    //    std::ofstream stream_out1;
+//    std::string fileOut1 = "c:\\tmp\\mmatrix.dat";
+//    stream_out1.open(fileOut1);
+//    if (stream_out1.is_open()) {
+//        stream_out1 << M << std::endl;
+//        stream_out1.close();
+//    }
+//    std::cout << N << "\n" << std::endl;
+//    std::cout<<std::endl<<"M matrix"<< std::endl;
+//    std::cout<<M<<std::endl;
+//    std::cout<<"transl "<<transl<<std::endl;
+//    std::cout<<"R "<<R<<std::endl;
+//    std::cout<<"MM matrix"<<MM<<std::endl;
+//    std::cout << "a1 "<< a1 << "\n" << std::endl;
+//    std::cout << "a2 "<< a2 << "\n" << std::endl;
+//    std::cout << "a3 "<< a3 << "\n" << std::endl;
+//    std::cout << "b "<< b << "\n" << std::endl;
+//    std::cout << "ro "<< ro << "\n" << std::endl;
+//    std::cout << "u0 "<< u0 << "\n" << std::endl;
+//    std::cout << "v0 "<< v0 << "\n" << std::endl;
+//    std::cout << "costheta "<< costheta << "\n" << std::endl;
+//    std::cout << "theta "<< theta << "\n" << std::endl;
+//    std::cout << "sintheta "<< sintheta << "\n" << std::endl;
+//    std::cout<<"K matrix"<<K<<std::endl;
+//    std::cout<<"ro"<<ro<<std::endl;
+//    std::cout<<"u0"<<u0<<std::endl;
+//    std::cout<<"v0"<<v0<<std::endl;
+//    std::cout<<"costheta"<<costheta<<std::endl;
+//    std::cout<<"alpha"<<alpha<<std::endl;
+//    std::cout<<"beta"<<beta<<std::endl;
+    //    std::cout<<"r1 "<<r1<<std::endl;
+//    std::cout<<"r2 "<<r2<<std::endl;
+//    std::cout<<"r3 "<<r3<<std::endl;
+
 
     return true;
 }
