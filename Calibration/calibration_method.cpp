@@ -88,6 +88,7 @@ bool Calibration::calibration(
     int m = mat.rows()*2;
     int n = 12;
 
+    // matrix P in our case
     Matrix A = Matrix(m, n, 0.0);
     int ii = 0;
     for (int i = 0; i < mat.rows(); i++) {
@@ -119,12 +120,13 @@ bool Calibration::calibration(
         ii += 1;
     }
 
-
+    // initialising the SVD matrices and vector M
     Vector M = Vector(n, 0.0);
     Matrix U = Matrix(m,m,0.0);
     Matrix S = Matrix(m,n, 0.0);
     Matrix V = Matrix(n,n,0.0);
 
+    // svd creates the vector M
     svd_decompose(A, U, S, V);
     for (int i = 0; i < n; i++) {
         M[i] = V[i][n-1];
@@ -154,6 +156,19 @@ bool Calibration::calibration(
         }
     }
 
+    //construct the matrix of M from vector M
+    Matrix MM = (3,3,0.0);
+    MM[0][0]=M[0];
+    MM[0][1]=M[1];
+    MM[0][2]=M[2];
+    MM[1][0]=M[3];
+    MM[1][1]=M[4];
+    MM[1][2]=M[5];
+    MM[2][0]=M[6];
+    MM[2][1]=M[7];
+    MM[2][2]=M[8];
+
+    std::cout<<MM<<std::endl;
     //add check to see if close to zero
 
 
@@ -166,10 +181,10 @@ bool Calibration::calibration(
 
     // TODO: extract intrinsic parameters from M.
 
-    Vector a1 = Vector(M[1][1], M[1][2]);
-    Vector a2 = Vector(M[2][1], M[2][2]);
-    Vector a3 = Vector(M[3][1], M[3][2]);
-    Vector b = Vector(M[1][3], M[2][3], M[3][3]);
+    Vector a1 = Vector(MM[0][0], MM[0][1]);
+    Vector a2 = Vector(MM[1][0], MM[1][1]);
+    Vector a3 = Vector(MM[2][0], MM[2][1]);
+    Vector b = Vector(MM[0][2], MM[1][2], MM[2][2]);
 
     double ro = 0.0;
     double u0 = 0.0;
@@ -179,12 +194,12 @@ bool Calibration::calibration(
     ro = 1.0/(a3.norm());
     u0 = pow(ro,2)*dot(a1,a3);
     v0 = pow(ro,2)*dot(a2,a3);
-    double costheta = -(dot(cross(a1,a3),(cross(a2,a3)))/(dot(norm(cross(a1,a3))),norm(cross(a2,a3))));
+    double costheta = -(dot(cross(a1,a3),(cross(a2,a3)))/(dot((norm(cross(a1,a3))),norm(cross(a2,a3)))));
     double theta = acos(costheta);
     double sintheta = sin(theta);
     alpha = pow(ro,2)*norm(cross(a1,a3))*sintheta;
     beta = pow(ro,2)*norm(cross(a1,a3))*sintheta;
-
+/*
     Matrix K = (3,3,0.0);
     K[1][1]= alpha;
     K[1][2]= -alpha*(costheta*sintheta);
@@ -204,10 +219,10 @@ bool Calibration::calibration(
     std::cout<<"costheta"<<costheta<<std::endl;
     std::cout<<"alpha"<<alpha<<std::endl;
     std::cout<<"beta"<<beta<<std::endl;
-
+*/
     // TODO: extract extrinsic parameters from M.
+/*
 
-    
     Matrix r1 = (cross(a2,a3))/(norm(cross(a2,a1)));
     Vector2D r3 = ro*(a3);
     Vector2D r2 = cross(r3,r1);
@@ -217,7 +232,7 @@ bool Calibration::calibration(
 
     Vector3D transl = ro* mult(inverse(K),b);
 
-
+*/
 
 
     std::cout << "\n\tTODO: After you implement this function, please return 'true' - this will trigger the viewer to\n"
