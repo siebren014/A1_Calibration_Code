@@ -121,6 +121,10 @@ bool Calibration::calibration(
     MM[2][1]=M[9];
     MM[2][2]=M[10];
     MM[2][3]=M[11];
+    
+    //check the transpose of transpose of M matrix. It should return the original M
+    Matrix check = transpose(transpose(MM));
+    //std::cout<<"ch"<<check<<std::endl;
 
     // intrinsic and extrinsic parameters 
     Vector a1 = Vector3D(MM[0][0], MM[0][1], MM[0][2]);
