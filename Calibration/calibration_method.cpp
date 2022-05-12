@@ -53,6 +53,7 @@ bool Calibration::calibration(
     int m = mat.rows()*2;
     int n = 12;
 
+    //composition of the P matrix, in our case it is called A in the script
     Matrix A = Matrix(m, n, 0.0);
     int ii = 0;
     for (int i = 0; i < mat.rows(); i++) {
@@ -83,7 +84,7 @@ bool Calibration::calibration(
         A[ii][11] = -1.0*mat[i][4];
         ii += 1;
     }
-
+    // svd 
     Vector M = Vector(n, 0.0);
     Matrix U = Matrix(m,m,0.0);
     Matrix S = Matrix(m,n, 0.0);
@@ -93,7 +94,7 @@ bool Calibration::calibration(
     for (int i = 0; i < n; i++) {
         M[i] = V[i][n-1];
     }
-
+    // in order to check if P m = 0 vector. N should be the Null vector if it is not 0 the projected points are noisy. 
     Vector N = Vector(m,5.0);
     N = mult(A,M);
 
@@ -105,7 +106,8 @@ bool Calibration::calibration(
             throw std::invalid_argument( "input data too noisy" );
         }
     }
-
+    
+    //creating M matrix from m vector 
     Matrix34 MM = Matrix(3,4,0.0);
     MM[0][0]=M[0];
     MM[0][1]=M[1];
@@ -120,7 +122,7 @@ bool Calibration::calibration(
     MM[2][2]=M[10];
     MM[2][3]=M[11];
 
-
+    // intrinsic and extrinsic parameters 
     Vector a1 = Vector3D(MM[0][0], MM[0][1], MM[0][2]);
     Vector a2 = Vector3D(MM[1][0], MM[1][1], MM[1][2]);
     Vector a3 = Vector3D(MM[2][0], MM[2][1], MM[2][2]);
@@ -143,7 +145,7 @@ bool Calibration::calibration(
     alpha = pow(ro,2)*norm(cross(a1,a3))*sintheta;
     beta = pow(ro,2)*norm(cross(a1,a3))*sintheta;
 
-
+    // intrinsic matrix 
     Matrix33 K = (3,3,0.0);
     K[0][0]= alpha;
     K[0][1]= -alpha*(costheta*sintheta);
@@ -159,7 +161,8 @@ bool Calibration::calibration(
     Vector3D r1 = (cross(a2,a3))/(norm(cross(a2,a3)));
     Vector3D r3 = ro*(a3);
     Vector3D r2 = cross(r3,r1);
-
+    
+    //rotation and translation vector 
     R.set_row(0,{r1[0], r1[1], r1[2]});
     R.set_row(1,{r2[0], r2[1], r2[2]});
     R.set_row(2,{r3[0], r3[1], r3[2]});
